@@ -28,7 +28,7 @@ if(@$_GET['a'] == "logout"){
 
 Global $username2;
 $mode = MCRYPT_MODE_ECB;
-function checkAuth($username, $password){
+function checkAuth($link, $username, $password){
 	if(isset($_COOKIE['authtoken'])){
 		$authtoken = decode($_COOKIE['authtoken'], 2);
 		$info = explode("|", decrypt($authtoken, $GLOBALS['cipher'], $GLOBALS['mode'], $GLOBALS['key'], $GLOBALS['iv']));
@@ -36,9 +36,9 @@ function checkAuth($username, $password){
 		return true;
 	}else{
 		$sql_check_auth = "SELECT * FROM challenge4_users WHERE username='$username'";
-		$query_check_auth = mysql_query($sql_check_auth) or die(mysql_error());
-		if(mysql_num_rows($query_check_auth)){
-			$result = mysql_fetch_array($query_check_auth);
+		$query_check_auth = mysqli_query($link, $sql_check_auth) or die(mysqli_error($link));
+		if(mysqli_num_rows($query_check_auth)){
+			$result = mysqli_fetch_array($query_check_auth);
 			if($result['password'] == $password){
 				$authtoken = $result['id']."|".$result['email']."|".$result['username'];
 				$GLOBALS['username2'] = $result['username'];
@@ -48,7 +48,7 @@ function checkAuth($username, $password){
 		}
 	}
 }
-$auth = checkAuth(htmlentities(@$_POST['username']), md5(@$_POST['password']));
+$auth = checkAuth($link, htmlentities(@$_POST['username']), md5(@$_POST['password']));
 if($auth){
 		$message = "Welcome, $username2";
 }

@@ -1,0 +1,16 @@
+version: '3.1'
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: mysql.dockerfile
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+  crypto:
+    build:
+      context: .
+      dockerfile: crypto.dockerfile
+    ports:
+      - 8088:80
